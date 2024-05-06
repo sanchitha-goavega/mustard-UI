@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+    
+    <style>
+        .http-fields-block {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: rgb(247, 247, 247);
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Job List Section -->
+            <div class="col-lg-3 col-md-3 col-sm-12 bottom-0">
+                <div class="card mt-5">
+                    <div class="card-header">
+                        <h5 class="card-title">Job List</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul id="jobList" class="list-group">
+                            <!-- Job items will be dynamically added here -->
+                        </ul>
+                    </div>
+                    <div class="col-md-2">
+                        <button id="addJobButton"
+                            class="btn btn-primary btn-floating float-right position-fixed bottom-0 m-3 rounded-circle shadow">
+                            +
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- Job Form Section -->
+            <div class="col-lg-9 col-md-9 col-sm-12">
+                <div class="card mt-5">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Add Job</h5>
+                    </div>
+                    <div class="card-body p-3">
+                        <form id="jobForm">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <input type="text" id="jobName" class="form-control form-control-sm"
+                                        placeholder="Enter job name" required>
+                                </div>
+                                <div class="col">
+                                    <select id="jobType" class="form-control form-control-sm">
+                                        <option value="http">HTTP</option>
+                                        <option value="kafka">Kafka</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3" id="kafkaFields" style="display: none;">
+                                <div class="col">
+                                    <input type="text" id="kafkaUri" class="form-control form-control-sm"
+                                        placeholder="Enter URI">
+                                </div>
+                                <div class="col">
+                                    <input type="text" id="kafkaTopic" class="form-control form-control-sm"
+                                        placeholder="Enter topic">
+                                </div>
+                            </div>
+
+                            <div class="http-fields-block">
+                                <div class="row mb-3">
+                                    <div class="col col-md-2">
+                                        <select class="form-select form-select-sm http-method-select" required>
+                                            <option value="GET">GET</option>
+                                            <option value="POST">POST</option>
+                                            <option value="PUT">PUT</option>
+                                            <option value="DELETE">DELETE</option>
+                                        </select>
+                                    </div>
+                                    <div class="col col-md-2">
+                                        <select class="form-select form-select-sm auth-type-select mb-3">
+                                            <option value="none">None</option>
+                                            <option value="basic">Basic Auth</option>
+                                            <option value="bearer">Bearer Token</option>
+                                        </select>
+                                    </div>
+                                    <div class="col col-md-8">
+                                        <input type="text" class="form-control form-control-sm job-endpoint"
+                                            placeholder="Enter endpoint / API URL" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 basic-auth-fields" style="display: none;">
+                                    <div class="col col-md-6">
+                                        <input type="text" class="form-control form-control-sm username"
+                                            placeholder="Enter username">
+                                    </div>
+                                    <div class="col col-md-6">
+                                        <input type="password" class="form-control form-control-sm password"
+                                            placeholder="Enter password">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3 bearer-auth-fields" style="display: none;">
+                                    <input type="text" class="form-control form-control-sm bearer-token"
+                                        placeholder="Enter bearer token">
+                                </div>
+                                <div class="form-group">
+                                    <label for="requestHeaders" class="form-label">Request Headers </label>
+                                    <textarea class="form-control request-headers"
+                                        placeholder="key: value pairs separated by new line" rows="3"></textarea>
+                                </div>
+                                <div class="form-group request-body-block" style="display: none;">
+                                    <label for="requestBody" class="form-label">Request Body</label>
+                                    <textarea class="form-control request-body"
+                                        placeholder="Enter request body"></textarea>
+                                </div>
+                                <div class="row col-md-12">
+                                    <div class="col">
+                                        <button class="btn btn-primary my-3 send-request">Send Request</button>
+                                    </div>
+                                </div>
+                                <!-- <pre><code class="json response-body">{
+                                    "data": {
+                                      "id": 2,
+                                      "email": "janet.weaver@reqres.in",
+                                      "first_name": "Janet",
+                                      "last_name": "Weaver",
+                                      "avatar": "https://reqres.in/img/faces/2-image.jpg"
+                                    },
+                                    "support": {
+                                      "url": "https://reqres.in/#support-heading",
+                                      "text": "To keep ReqRes free, contributions towards server costs are appreciated!"
+                                    }
+                                  }</code></pre> -->
+                                <div class="response-section" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="response-body" class="form-label">Response</label>
+                                        <div class="response-body">
+                                            <pre><code class="language-json">
+                                            </code></pre>
+                                        </div>
+                                        <!-- <textarea class="form-control response-body code" readonly></textarea> -->
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="jsontransform" class="form-label">JSON Transformation</label>
+                                        <textarea class="form-control jsontransform code" readonly></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="javascript" class="form-label">Javascript</label>
+                                        <textarea class="form-control javascript code" readonly></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="additionalApiBlock">
+
+                            </div>
+                            
+                            <div class="row col-md-12 my-3">
+                                <div class="col">
+                                    <a class="btn btn-primary" id="addApi">Add Api request</a>
+                                </div>
+                                <div class="col float-right">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button class="btn btn-primary" id="createJob">Create Job</button>
+                                </div>
+                            </div>
+                            
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            hljs.highlightAll();
+
+
+            var httpBlock = '<div class="http-fields-block">' +
+                '<div class="row mb-3">' +
+                '<div class="col col-md-2">' +
+                '<select class="form-select form-select-sm http-method-select" required>' +
+                '<option value="GET">GET</option>' +
+                '<option value="POST">POST</option>' +
+                '<option value="PUT">PUT</option>' +
+                '<option value="DELETE">DELETE</option>' +
+                '</select>' +
+                '</div>' +
+                '<div class="col col-md-2">' +
+                '<select class="form-select form-select-sm auth-type-select mb-3">' +
+                '<option value="none">None</option>' +
+                '<option value="basic">Basic Auth</option>' +
+                '<option value="bearer">Bearer Token</option>' +
+                '</select>' +
+                '</div>' +
+                '<div class="col col-md-8">' +
+                '<input type="text" class="form-control form-control-sm job-endpoint" placeholder="Enter endpoint / API URL" required>' +
+                '</div>' +
+                '</div>' +
+                '<div class="row mb-3 basic-auth-fields" style="display: none;">' +
+                '<div class="col col-md-6">' +
+                '<input type="text" class="form-control form-control-sm username" placeholder="Enter username">' +
+                '</div>' +
+                '<div class="col col-md-6">' +
+                '<input type="password" class="form-control form-control-sm password" placeholder="Enter password">' +
+                '</div>' +
+                '</div>' +
+                '<div class="form-group mb-3 bearer-auth-fields" style="display: none;">' +
+                '<input type="text" class="form-control form-control-sm bearer-token" placeholder="Enter bearer token">' +
+                '</div>' +
+                '<div class="form-group">' +
+                '<label for="requestHeaders" class="form-label">Request Headers</label>' +
+                '<textarea class="form-control request-headers" placeholder="key: value pairs separated by new line" rows="3"></textarea>' +
+                '</div>' +
+                '<div class="form-group request-body-block" style="display: none;">' +
+                '<label for="requestBody" class="form-label">Request Body</label>' +
+                '<textarea class="form-control request-body" placeholder="Enter request body"></textarea>' +
+                '</div>' +
+                '<button class="btn btn-primary my-3 send-request">Send Request</button>' +
+                '<div class="response-section" style="display: none;">' +
+                '<div class="form-group">' +
+                '<label for="responseBody" class="form-label">Response</label>' +
+                '<textarea class="form-control response-body code" readonly></textarea>' +
+                '</div>' +
+                '<div class="form-group">' +
+                '<label for="jsontransform" class="form-label">JSON Transformation</label>' +
+                '<textarea class="form-control jsontransform code" readonly></textarea>' +
+                '</div>' +
+                '<div class="form-group">' +
+                '<label for="javascript" class="form-label">Javascript</label>' +
+                '<textarea class="form-control javascript code" readonly></textarea>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+
+            var existingJobs = JSON.parse(localStorage.getItem('jobs')) || [];
+            displayJobsFromLocalStorage();
+
+            function addJobToLocalStorage(job) {
+                if (typeof (Storage) !== "undefined") {
+                    existingJobs.push(job);
+                    localStorage.setItem('jobs', JSON.stringify(existingJobs));
+                } else {
+                    console.error("Local storage is not supported.");
+                }
+            }
+
+            function displayJobsFromLocalStorage() {
+                if (typeof (Storage) !== "undefined") {
+                    existingJobs.forEach(function (job) {
+                        addJobToList(job[0]);
+                    });
+                } else {
+                    console.error("Local storage is not supported.");
+                }
+            }
+
+            function addJobToList(job) {
+                var jobItem = '<li class="list-group-item">' +
+                    '<span class="job-name">' + job.name + '</span>' +
+                    '<span class="job-type">(' + job.type + ')</span>' +
+                    '<button class="btn btn-sm btn-danger float-end delete-job"><strong>-</strong></button>' +
+                    '</li>';
+                $('#jobList').append(jobItem);
+            }
+
+            function populateFormWithJobDetails(job) {
+                $('#jobName').val(job[0].name);
+                $('#jobType').val(job[0].type).trigger('change');
+                // $('.http-fields-block').remove(); // Remove existing HTTP blocks
+                job.forEach(function (currentJob, index) {
+                    alert(index)
+                    if (index > 0) {
+                        $('#additionalApiBlock').append(httpBlock);
+                    }
+                    var httpBlock = $('.http-fields-block').eq(index); 
+                    httpBlock.find('.job-endpoint').val(currentJob.endpoint);
+                    httpBlock.find('.http-method-select').val(currentJob.method);
+                    httpBlock.find('.request-headers').val(currentJob.headers);
+                    httpBlock.find('.request-body').val(currentJob.body);
+                    var authType = currentJob.authType;
+                    httpBlock.find('.auth-type-select').val(authType).trigger('change');
+                    if (authType === 'basic') {
+                        httpBlock.find('.username').val(currentJob.username);
+                        httpBlock.find('.password').val(currentJob.password);
+                    } else if (authType === 'bearer') {
+                        httpBlock.find('.bearer-token').val(currentJob.bearerToken);
+                    }
+                });
+            }
+
+
+            function updateJob(updatedJob, index) {
+                if (index >= 0 && index < existingJobs.length) {
+                    existingJobs[index] = updatedJob;
+                    localStorage.setItem('jobs', JSON.stringify(existingJobs));
+                }
+            }
+
+            $('#addJobButton').click(function () {
+                $('#jobForm')[0].reset();
+            });
+            var jobs = [];
+            $('#createJob').click(function () {
+                var currentJob = [];
+                
+                $('.http-fields-block').each(function (index) {
+                    var httpBlock = $(this);
+                    var name = $('#jobName').val();
+                    var type = $('#jobType').val();
+                    var endpoint = httpBlock.find('.job-endpoint').val();
+                    var method = httpBlock.find('.http-method-select').val();
+                    var headers = httpBlock.find('.request-headers').val();
+                    var body = httpBlock.find('.request-body').val();
+                    var authType = httpBlock.find('.auth-type-select').val();
+                    var username = httpBlock.find('.username').val();
+                    var password = httpBlock.find('.password').val();
+                    var bearerToken = httpBlock.find('.bearer-token').val();
+
+                    var job = {
+                        name: name,
+                        type: type,
+                        endpoint: endpoint,
+                        method: method,
+                        headers: headers,
+                        body: body,
+                        authType: authType,
+                        username: username,
+                        password: password,
+                        bearerToken: bearerToken
+                    };
+
+                    currentJob.push(job);
+                });
+                jobs.push(currentJob);
+               
+                localStorage.setItem('jobs', JSON.stringify(jobs));
+                // Add job to local storage
+                // addJobToLocalStorage(currentJob);
+
+                // Add job to the list
+                jobs.forEach(function (job) {
+                    addJobToList(job);
+                });
+
+                // Clear form fields
+                $('#jobForm')[0].reset();
+            });
+
+
+            $(document).on('click', '.send-request', function (e) {
+                e.preventDefault();
+                var httpBlock = $(this).closest('.http-fields-block');
+                var endpoint = httpBlock.find('.job-endpoint').val();
+                var method = httpBlock.find('.http-method-select').val();
+                var headers = httpBlock.find('.request-headers').val();
+                
+                var body = httpBlock.find('.request-body').val();
+                var authType = httpBlock.find('.auth-type-select').val();
+                var username = httpBlock.find('.username').val();
+                var password = httpBlock.find('.password').val();
+                var bearerToken = httpBlock.find('.bearer-token').val();
+
+                var parsedHeaders = {};
+
+                headers.split('\n').forEach(function(line) {
+                    var parts = line.split(':');
+                    if (parts.length === 2) {
+                        var key = parts[0].trim();
+                        var value = parts[1].trim();
+                        parsedHeaders[key] = value;
+                    }
+                });
+                if (authType === 'basic') {
+                    var authHeader = 'Basic ' + btoa(username + ':' + password);
+                    parsedHeaders['Authorization'] = authHeader;
+                } else if (authType === 'bearer') {
+                    parsedHeaders['Authorization'] = 'Bearer ' + bearerToken;
+                }
+                $.ajax({
+                    url: endpoint,
+                    method: method,
+                    headers: parsedHeaders,
+                    data: body,
+                    success: function (response) {
+                        var responseBody = httpBlock.find('.response-body code');
+                        responseBody.text(JSON.stringify(response, null, 2)); // Set the response body content
+    hljs.highlightElement(responseBody[0]);
+                        // hljs.highlightBlock(httpBlock.find('.response-body')[0]);
+                        // var content = document.getElementsByClassName('.response-body');
+                        // hljs.highlightAll(content);
+                        httpBlock.find('.response-section').show();
+
+                    },
+                    error: function (xhr, status, error) {
+                        httpBlock.find('.response-body').val("Error: Invalid Request");
+                        httpBlock.find('.response-section').show();
+                    }
+                });
+            });
+
+            $(document).on('click', '.list-group-item', function () {
+                var index = $(this).index(); // Get the index of clicked job item
+                if (index >= 0 && index < existingJobs.length) {
+                    var selectedJob = existingJobs[index];
+                    populateFormWithJobDetails(selectedJob);
+                }
+            });
+            $('#editJob').click(function () {
+                var index = $(this).data('index'); // Get the index of the edited job
+                var updatedJob = {
+                    name: $('#jobName').val(),
+                    type: $('#jobType').val(),
+                    endpoint: $('#jobEndpoint').val(),
+                    method: $('#httpMethod').val(),
+                    headers: $('#requestHeaders').val(),
+                    body: $('#requestBody').val(),
+                    transformation: $('#jsonTransformation').val(),
+                    jsCode: $('#jsCode').val()
+                };
+                updateJob(updatedJob, index);
+                var jobItem = $('#jobList').find('.list-group-item').eq(index);
+                if (jobItem.length > 0) {
+                    jobItem.find('.job-name').text(updatedJob.name);
+                    jobItem.find('.job-type').text(updatedJob.type);
+                }
+            });
+
+
+            ///change events
+            $('#jobType').change(function () {
+                var selectedType = $(this).val();
+                if (selectedType === 'http') {
+                    $('#httpFields').show();
+                    $('#kafkaFields').hide();
+                } else if (selectedType === 'kafka') {
+                    $('#httpFields').hide();
+                    $('#kafkaFields').show();
+                }
+            });
+
+            $(document).on('change', '.auth-type-select', function () {
+                var selectedAuthType = $(this).val();
+                var httpBlock = $(this).closest('.http-fields-block');
+                if (selectedAuthType === 'basic') {
+                    httpBlock.find('.basic-auth-fields').show();
+                    httpBlock.find('.bearer-auth-fields').hide();
+                } else if (selectedAuthType === 'bearer') {
+                    httpBlock.find('.basic-auth-fields').hide();
+                    httpBlock.find('.bearer-auth-fields').show();
+                } else {
+                    httpBlock.find('.basic-auth-fields').hide();
+                    httpBlock.find('.bearer-auth-fields').hide();
+                }
+            });
+            $(document).on('change', '.http-method-select', function () {
+                var selectedHttpMethod = $(this).val();
+                var httpBlock = $(this).closest('.http-fields-block');
+                if (selectedHttpMethod === 'PUT' || selectedHttpMethod === 'POST') {
+                    httpBlock.find('.request-body-block').show();
+                } else {
+                    httpBlock.find('.request-body-block').hide();
+                }
+            });
+
+            $('#addApi').click(function (e) {
+                $('#additionalApiBlock').append(httpBlock);
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
