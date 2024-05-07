@@ -10,9 +10,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
-    
+
     <style>
-        .http-fields-block {
+        .request-block {
             border: 1px solid #ccc;
             padding: 10px;
             margin-bottom: 10px;
@@ -34,7 +34,6 @@
                     </div>
                     <div class="card-body">
                         <ul id="jobList" class="list-group">
-                            <!-- Job items will be dynamically added here -->
                         </ul>
                     </div>
                     <div class="col-md-2">
@@ -60,112 +59,123 @@
                                     <input type="text" id="jobName" class="form-control form-control-sm"
                                         placeholder="Enter job name" required>
                                 </div>
-                                <div class="col">
-                                    <select id="jobType" class="form-control form-control-sm">
-                                        <option value="http">HTTP</option>
-                                        <option value="kafka">Kafka</option>
-                                    </select>
-                                </div>
                             </div>
 
-                            <div class="row mb-3" id="kafkaFields" style="display: none;">
-                                <div class="col">
-                                    <input type="text" id="kafkaUri" class="form-control form-control-sm"
-                                        placeholder="Enter URI">
-                                </div>
-                                <div class="col">
-                                    <input type="text" id="kafkaTopic" class="form-control form-control-sm"
-                                        placeholder="Enter topic">
-                                </div>
-                            </div>
-
-                            <div class="http-fields-block">
-                                <div class="row mb-3">
-                                    <div class="col col-md-2">
-                                        <select class="form-select form-select-sm http-method-select" required>
-                                            <option value="GET">GET</option>
-                                            <option value="POST">POST</option>
-                                            <option value="PUT">PUT</option>
-                                            <option value="DELETE">DELETE</option>
-                                        </select>
-                                    </div>
-                                    <div class="col col-md-2">
-                                        <select class="form-select form-select-sm auth-type-select mb-3">
-                                            <option value="none">None</option>
-                                            <option value="basic">Basic Auth</option>
-                                            <option value="bearer">Bearer Token</option>
-                                        </select>
-                                    </div>
-                                    <div class="col col-md-8">
-                                        <input type="text" class="form-control form-control-sm job-endpoint"
-                                            placeholder="Enter endpoint / API URL" required>
-                                    </div>
-                                </div>
-                                <div class="row mb-3 basic-auth-fields" style="display: none;">
-                                    <div class="col col-md-6">
-                                        <input type="text" class="form-control form-control-sm username"
-                                            placeholder="Enter username">
-                                    </div>
-                                    <div class="col col-md-6">
-                                        <input type="password" class="form-control form-control-sm password"
-                                            placeholder="Enter password">
-                                    </div>
-                                </div>
-                                <div class="form-group mb-3 bearer-auth-fields" style="display: none;">
-                                    <input type="text" class="form-control form-control-sm bearer-token"
-                                        placeholder="Enter bearer token">
-                                </div>
-                                <div class="form-group">
-                                    <label for="requestHeaders" class="form-label">Request Headers </label>
-                                    <textarea class="form-control request-headers"
-                                        placeholder="key: value pairs separated by new line" rows="3"></textarea>
-                                </div>
-                                <div class="form-group request-body-block" style="display: none;">
-                                    <label for="requestBody" class="form-label">Request Body</label>
-                                    <textarea class="form-control request-body"
-                                        placeholder="Enter request body"></textarea>
-                                </div>
-                                <div class="row col-md-12">
-                                    <div class="col">
-                                        <button class="btn btn-primary my-3 send-request">Send Request</button>
-                                    </div>
-                                </div>
-                                <!-- <pre><code class="json response-body">{
-                                    "data": {
-                                      "id": 2,
-                                      "email": "janet.weaver@reqres.in",
-                                      "first_name": "Janet",
-                                      "last_name": "Weaver",
-                                      "avatar": "https://reqres.in/img/faces/2-image.jpg"
-                                    },
-                                    "support": {
-                                      "url": "https://reqres.in/#support-heading",
-                                      "text": "To keep ReqRes free, contributions towards server costs are appreciated!"
-                                    }
-                                  }</code></pre> -->
-                                <div class="response-section" style="display: none;">
-                                    <div class="form-group">
-                                        <label for="response-body" class="form-label">Response</label>
-                                        <div class="response-body">
-                                            <pre><code class="language-json">
-                                            </code></pre>
+                            <div class="accordion" id="requestAccordion">
+                                <button class="btn btn-primary btn-sm accordion-button" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#requestBlock1" aria-expanded="true"
+                                    aria-controls="requestBlock1">
+                                    Request Block 1
+                                </button>
+                                <div id="requestBlock1" class="collapse show" aria-labelledby="headingOne"
+                                    data-bs-parent="#requestAccordion">
+                                    <div class="request-block">
+                                        <div class="col-md-2">
+                                            <label for="jobType" class="form-label">Job Type</label>
+                                            <select class="form-select form-select-sm jobType">
+                                                <option value="http">HTTP</option>
+                                                <option value="kafka">Kafka</option>
+                                            </select>
                                         </div>
-                                        <!-- <textarea class="form-control response-body code" readonly></textarea> -->
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="jsontransform" class="form-label">JSON Transformation</label>
-                                        <textarea class="form-control jsontransform code" readonly></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="javascript" class="form-label">Javascript</label>
-                                        <textarea class="form-control javascript code" readonly></textarea>
+                                        <div class="http-fields-block">
+                                            <div class="row">
+                                                <div class="col col-md-2">
+                                                    <label for="http-method-select" class="form-label">Method</label>
+                                                    <select class="form-select form-select-sm http-method-select"
+                                                        required>
+                                                        <option value="GET">GET</option>
+                                                        <option value="POST">POST</option>
+                                                        <option value="PUT">PUT</option>
+                                                        <option value="DELETE">DELETE</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col col-md-2">
+                                                    <label for="auth-type-select" class="form-label">Auth Type</label>
+                                                    <select class="form-select form-select-sm auth-type-select mb-3">
+                                                        <option value="none">None</option>
+                                                        <option value="basic">Basic Auth</option>
+                                                        <option value="bearer">Bearer Token</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col col-md-8">
+                                                    <label for="job-endpoint" class="form-label">Endpoint / API
+                                                        URL</label>
+                                                    <input type="text" class="form-control form-control-sm job-endpoint"
+                                                        placeholder="Enter endpoint / API URL" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-3 basic-auth-fields" style="display: none;">
+                                                <div class="col col-md-6">
+                                                    <input type="text" class="form-control form-control-sm username"
+                                                        placeholder="Enter username">
+                                                </div>
+                                                <div class="col col-md-6">
+                                                    <input type="password" class="form-control form-control-sm password"
+                                                        placeholder="Enter password">
+                                                </div>
+                                            </div>
+                                            <div class="form-group mb-3 bearer-auth-fields" style="display: none;">
+                                                <input type="text" class="form-control form-control-sm bearer-token"
+                                                    placeholder="Enter bearer token">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="requestHeaders" class="form-label">Request Headers </label>
+                                                <textarea class="form-control request-headers"
+                                                    placeholder="key: value pairs separated by new line"
+                                                    rows="3"></textarea>
+                                            </div>
+                                            <div class="form-group request-body-block" style="display: none;">
+                                                <label for="requestBody" class="form-label">Request Body</label>
+                                                <textarea class="form-control request-body"
+                                                    placeholder="Enter request body"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row kafka-fields-block" style="display:none;">
+                                            <div class="col-md-6">
+                                                <label for="kafkaUri" class="form-label">Kafka URI</label>
+                                                <input type="text kafkaUri" class="form-control form-control-sm"
+                                                    placeholder="Enter URI">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="kafkaTopic" class="form-label">Kafka Topic</label>
+                                                <input type="text kafkaTopic" class="form-control form-control-sm"
+                                                    placeholder="Enter topic">
+                                            </div>
+                                        </div>
+                                        <div class="row col-md-12">
+                                            <div class="col">
+                                                <button class="btn btn-primary my-3 send-request">Send Request</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="response-section" style="display: none;">
+                                            <div class="form-group">
+                                                <label for="response-body" class="form-label">Response</label>
+                                                <div class="response-body" style="height:300px;overflow:auto;">
+                                                    <pre><code class="language-json">
+                                                            </code></pre>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="jsontransform" class="form-label">JSON
+                                                    Transformation</label>
+                                                <textarea class="form-control jsontransform code" readonly></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="javascript" class="form-label">Javascript</label>
+                                                <textarea class="form-control javascript code" readonly></textarea>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+
                             <div id="additionalApiBlock">
 
                             </div>
-                            
+
                             <div class="row col-md-12 my-3">
                                 <div class="col">
                                     <a class="btn btn-primary" id="addApi">Add Api request</a>
@@ -175,7 +185,7 @@
                                     <button class="btn btn-primary" id="createJob">Create Job</button>
                                 </div>
                             </div>
-                            
+
 
                         </form>
                     </div>
@@ -193,94 +203,26 @@
 
             hljs.highlightAll();
 
-
-            var httpBlock = '<div class="http-fields-block">' +
-                '<div class="row mb-3">' +
-                '<div class="col col-md-2">' +
-                '<select class="form-select form-select-sm http-method-select" required>' +
-                '<option value="GET">GET</option>' +
-                '<option value="POST">POST</option>' +
-                '<option value="PUT">PUT</option>' +
-                '<option value="DELETE">DELETE</option>' +
-                '</select>' +
-                '</div>' +
-                '<div class="col col-md-2">' +
-                '<select class="form-select form-select-sm auth-type-select mb-3">' +
-                '<option value="none">None</option>' +
-                '<option value="basic">Basic Auth</option>' +
-                '<option value="bearer">Bearer Token</option>' +
-                '</select>' +
-                '</div>' +
-                '<div class="col col-md-8">' +
-                '<input type="text" class="form-control form-control-sm job-endpoint" placeholder="Enter endpoint / API URL" required>' +
-                '</div>' +
-                '</div>' +
-                '<div class="row mb-3 basic-auth-fields" style="display: none;">' +
-                '<div class="col col-md-6">' +
-                '<input type="text" class="form-control form-control-sm username" placeholder="Enter username">' +
-                '</div>' +
-                '<div class="col col-md-6">' +
-                '<input type="password" class="form-control form-control-sm password" placeholder="Enter password">' +
-                '</div>' +
-                '</div>' +
-                '<div class="form-group mb-3 bearer-auth-fields" style="display: none;">' +
-                '<input type="text" class="form-control form-control-sm bearer-token" placeholder="Enter bearer token">' +
-                '</div>' +
-                '<div class="form-group">' +
-                '<label for="requestHeaders" class="form-label">Request Headers</label>' +
-                '<textarea class="form-control request-headers" placeholder="key: value pairs separated by new line" rows="3"></textarea>' +
-                '</div>' +
-                '<div class="form-group request-body-block" style="display: none;">' +
-                '<label for="requestBody" class="form-label">Request Body</label>' +
-                '<textarea class="form-control request-body" placeholder="Enter request body"></textarea>' +
-                '</div>' +
-                '<button class="btn btn-primary my-3 send-request">Send Request</button>' +
-                '<div class="response-section" style="display: none;">' +
-                '<div class="form-group">' +
-                '<label for="responseBody" class="form-label">Response</label>' +
-                '<textarea class="form-control response-body code" readonly></textarea>' +
-                '</div>' +
-                '<div class="form-group">' +
-                '<label for="jsontransform" class="form-label">JSON Transformation</label>' +
-                '<textarea class="form-control jsontransform code" readonly></textarea>' +
-                '</div>' +
-                '<div class="form-group">' +
-                '<label for="javascript" class="form-label">Javascript</label>' +
-                '<textarea class="form-control javascript code" readonly></textarea>' +
-                '</div>' +
-                '</div>' +
-                '</div>';
+            var requestBlockClone = $('.request-block').clone();
 
             var existingJobs = JSON.parse(localStorage.getItem('jobs')) || [];
             displayJobsFromLocalStorage();
 
-            function addJobToLocalStorage(job) {
-                if (typeof (Storage) !== "undefined") {
-                    existingJobs.push(job);
-                    localStorage.setItem('jobs', JSON.stringify(existingJobs));
-                } else {
-                    console.error("Local storage is not supported.");
-                }
-            }
+
 
             function displayJobsFromLocalStorage() {
                 if (typeof (Storage) !== "undefined") {
-                    existingJobs.forEach(function (job) {
-                        addJobToList(job[0]);
+
+                    Object.keys(existingJobs).forEach(function (jobName) {
+                        var apiData = existingJobs[jobName];
+                        addJobToList(jobName, apiData);
                     });
                 } else {
                     console.error("Local storage is not supported.");
                 }
             }
 
-            function addJobToList(job) {
-                var jobItem = '<li class="list-group-item">' +
-                    '<span class="job-name">' + job.name + '</span>' +
-                    '<span class="job-type">(' + job.type + ')</span>' +
-                    '<button class="btn btn-sm btn-danger float-end delete-job"><strong>-</strong></button>' +
-                    '</li>';
-                $('#jobList').append(jobItem);
-            }
+
 
             function populateFormWithJobDetails(job) {
                 $('#jobName').val(job[0].name);
@@ -291,7 +233,7 @@
                     if (index > 0) {
                         $('#additionalApiBlock').append(httpBlock);
                     }
-                    var httpBlock = $('.http-fields-block').eq(index); 
+                    var httpBlock = $('.http-fields-block').eq(index);
                     httpBlock.find('.job-endpoint').val(currentJob.endpoint);
                     httpBlock.find('.http-method-select').val(currentJob.method);
                     httpBlock.find('.request-headers').val(currentJob.headers);
@@ -321,58 +263,61 @@
             var jobs = [];
             $('#createJob').click(function () {
                 var currentJob = [];
-                
-                $('.http-fields-block').each(function (index) {
-                    var httpBlock = $(this);
-                    var name = $('#jobName').val();
-                    var type = $('#jobType').val();
-                    var endpoint = httpBlock.find('.job-endpoint').val();
-                    var method = httpBlock.find('.http-method-select').val();
-                    var headers = httpBlock.find('.request-headers').val();
-                    var body = httpBlock.find('.request-body').val();
-                    var authType = httpBlock.find('.auth-type-select').val();
-                    var username = httpBlock.find('.username').val();
-                    var password = httpBlock.find('.password').val();
-                    var bearerToken = httpBlock.find('.bearer-token').val();
 
-                    var job = {
-                        name: name,
-                        type: type,
-                        endpoint: endpoint,
-                        method: method,
-                        headers: headers,
-                        body: body,
-                        authType: authType,
-                        username: username,
-                        password: password,
-                        bearerToken: bearerToken
+                $('.request-block').each(function () {
+                    var reqBlock = $(this);
+
+                    // Construct object with desired data
+                    var serializedData = {
+                        type: reqBlock.find('.jobType').val(),
+                        endpoint: reqBlock.find('.job-endpoint').val(),
+                        method: reqBlock.find('.http-method-select').val(),
+                        headers: reqBlock.find('.request-headers').val(),
+                        body: reqBlock.find('.request-body').val(),
+                        authType: reqBlock.find('.auth-type-select').val(),
+                        username: reqBlock.find('.username').val(),
+                        password: reqBlock.find('.password').val(),
+                        bearerToken: reqBlock.find('.bearer-token').val(),
+                        kafkaUri: reqBlock.find('.kafkaUri').val(),
+                        kafkaTopic: reqBlock.find('kafkaTopic').val(),
                     };
 
-                    currentJob.push(job);
+                    currentJob.push(serializedData);
                 });
-                jobs.push(currentJob);
-               
+
+                var jobName = $('#jobName').val();
+                var jobs = JSON.parse(localStorage.getItem('jobs')) || {};
+                jobs[jobName] = currentJob;
                 localStorage.setItem('jobs', JSON.stringify(jobs));
-                // Add job to local storage
-                // addJobToLocalStorage(currentJob);
 
-                // Add job to the list
-                jobs.forEach(function (job) {
-                    addJobToList(job);
-                });
+                addJobToList(jobName);
 
-                // Clear form fields
                 $('#jobForm')[0].reset();
             });
 
+            function addJobToList(jobname, apiData) {
+                var apiText = '';
+                apiData.forEach(function (api) {
+                    apiText += api.type.toUpperCase() + ', '; // Convert type to uppercase
+                });
+                apiText = apiText.slice(0, -2); // Remove the last comma and space
+
+                var jobItem = '<li class="list-group-item">' +
+                    '<span class="job-name"><strong>' + jobname.toUpperCase() + '</strong></span>' + // Bold and uppercase
+                    '<br>' + // Line break to separate job name and API details
+                    '<span class="job-type" style="font-size: smaller;">(' + apiText + ')</span>' + // Smaller text
+                    '<button class="btn btn-sm btn-danger float-end delete-job"><strong>-</strong></button>' +
+                    '</li>';
+                $('#jobList').append(jobItem);
+            }
 
             $(document).on('click', '.send-request', function (e) {
                 e.preventDefault();
-                var httpBlock = $(this).closest('.http-fields-block');
+                var httpBlock = $(this).closest('.request-block');
                 var endpoint = httpBlock.find('.job-endpoint').val();
                 var method = httpBlock.find('.http-method-select').val();
                 var headers = httpBlock.find('.request-headers').val();
-                
+
                 var body = httpBlock.find('.request-body').val();
                 var authType = httpBlock.find('.auth-type-select').val();
                 var username = httpBlock.find('.username').val();
@@ -380,8 +325,7 @@
                 var bearerToken = httpBlock.find('.bearer-token').val();
 
                 var parsedHeaders = {};
-
-                headers.split('\n').forEach(function(line) {
+                headers.split('\n').forEach(function (line) {
                     var parts = line.split(':');
                     if (parts.length === 2) {
                         var key = parts[0].trim();
@@ -403,10 +347,7 @@
                     success: function (response) {
                         var responseBody = httpBlock.find('.response-body code');
                         responseBody.text(JSON.stringify(response, null, 2)); // Set the response body content
-    hljs.highlightElement(responseBody[0]);
-                        // hljs.highlightBlock(httpBlock.find('.response-body')[0]);
-                        // var content = document.getElementsByClassName('.response-body');
-                        // hljs.highlightAll(content);
+                        hljs.highlightElement(responseBody[0]);
                         httpBlock.find('.response-section').show();
 
                     },
@@ -446,14 +387,17 @@
 
 
             ///change events
-            $('#jobType').change(function () {
+            $(document).on('change', '.jobType', function () {
                 var selectedType = $(this).val();
+                var httpFieldsBlock = $(this).closest('.request-block').find('.http-fields-block');
+                var kafkaFields = $(this).closest('.request-block').find('.kafka-fields-block');
+
                 if (selectedType === 'http') {
-                    $('#httpFields').show();
-                    $('#kafkaFields').hide();
+                    httpFieldsBlock.show();
+                    kafkaFields.hide();
                 } else if (selectedType === 'kafka') {
-                    $('#httpFields').hide();
-                    $('#kafkaFields').show();
+                    httpFieldsBlock.hide();
+                    kafkaFields.show();
                 }
             });
 
@@ -482,12 +426,17 @@
             });
 
             $('#addApi').click(function (e) {
-                $('#additionalApiBlock').append(httpBlock);
+                var requestBlockCount = $('.request-block').length + 1;
+                $('#additionalApiBlock').append(
+                    '<div class="accordion" id="requestAccordion' + requestBlockCount + '">' +
+                    '<button class="btn btn-primary btn-sm accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#requestBlock' + requestBlockCount + '" aria-expanded="true" aria-controls="requestBlock' + requestBlockCount + '">Request Block ' +
+                    requestBlockCount + '</button>' +
+                    '<div id="requestBlock' + requestBlockCount + '" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#requestAccordion' + requestBlockCount + '"><div class="request-block">' +
+                    requestBlockClone.html() + '</div></div></div>'
+                );
             });
         });
-
     </script>
-
 </body>
 
 </html>
