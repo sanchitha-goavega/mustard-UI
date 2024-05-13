@@ -10,14 +10,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    
     <style>
-        .request-block {
-            border: 1px solid #ccc;
+        .accordion-body {
             padding: 10px;
-            margin-bottom: 10px;
             background-color: rgb(247, 247, 247);
-            border-radius: 6px;
+        }
+
+        .col-form-label {
+            font-size: smaller;
+        }
+
+        .chart-type {
+            height: 40px;
+        }
+
+        .chart-type.selected {
+            border: 2px solid blue;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -30,7 +42,7 @@
             <div class="col-lg-3 col-md-3 col-sm-12 bottom-0">
                 <div class="card mt-5">
                     <div class="card-header">
-                        <h5 class="card-title">Job List</h5>
+                        <h5 class="card-title mb-0">Job List</h5>
                     </div>
                     <div class="card-body">
                         <ul id="jobList" class="list-group">
@@ -56,147 +68,227 @@
                         <form id="jobForm">
                             <div class="row mb-3">
                                 <div class="col">
+                                    <label for="jobName" class="col-form-label">Job Name</label>
                                     <input type="text" id="jobName" class="form-control form-control-sm"
                                         placeholder="Enter job name" required>
                                 </div>
                             </div>
 
+
                             <div class="accordion" id="requestAccordion">
-                                <button class="btn btn-primary btn-sm accordion-button" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#requestBlock1" aria-expanded="true"
-                                    aria-controls="requestBlock1">
-                                    Request Block 1
-                                </button>
-                                <div id="requestBlock1" class="collapse show" aria-labelledby="headingOne"
-                                    data-bs-parent="#requestAccordion">
-                                    <div class="request-block">
-                                        <div class="col-md-2">
-                                            <label for="jobType" class="form-label">Job Type</label>
-                                            <select class="form-select form-select-sm jobType">
-                                                <option value="http">HTTP</option>
-                                                <option value="kafka">Kafka</option>
-                                            </select>
-                                        </div>
-                                        <div class="http-fields-block">
-                                            <div class="row">
-                                                <div class="col col-md-2">
-                                                    <label for="http-method-select" class="form-label">Method</label>
-                                                    <select class="form-select form-select-sm http-method-select"
-                                                        required>
-                                                        <option value="GET">GET</option>
-                                                        <option value="POST">POST</option>
-                                                        <option value="PUT">PUT</option>
-                                                        <option value="DELETE">DELETE</option>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header d-flex justify-content-between align-items-center"
+                                        id="headingOne" style="background-color: #cfe2ff;">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#requestBlock1" aria-expanded="true"
+                                            aria-controls="requestBlock1" style="background-color: #cfe2ff;">
+                                            Request Block 1
+                                        </button>
+                                        <button class="btn btn-sm delete-accordion-item" type="button">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+
+                                    </h2>
+                                    <div id="requestBlock1" class="accordion-collapse collapse show"
+                                        aria-labelledby="headingOne" data-bs-parent="#requestAccordion">
+                                        <div class="accordion-body">
+                                            <div class="request-block">
+                                                <div class="col-md-2">
+                                                    <label for="jobType" class="col-form-label">Job Type</label>
+                                                    <select class="form-select form-select-sm jobType">
+                                                        <option value="http">HTTP</option>
+                                                        <option value="kafka">Kafka</option>
                                                     </select>
                                                 </div>
-                                                <div class="col col-md-2">
-                                                    <label for="auth-type-select" class="form-label">Auth Type</label>
-                                                    <select class="form-select form-select-sm auth-type-select mb-3">
-                                                        <option value="none">None</option>
-                                                        <option value="basic">Basic Auth</option>
-                                                        <option value="bearer">Bearer Token</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col col-md-8">
-                                                    <label for="job-endpoint" class="form-label">Endpoint / API
-                                                        URL</label>
-                                                    <input type="text" class="form-control form-control-sm job-endpoint"
-                                                        placeholder="Enter endpoint / API URL" required>
-                                                </div>
-                                            </div>
+                                                <div class="http-fields-block">
+                                                    <div class="row">
+                                                        <div class="col col-md-2">
+                                                            <label for="http-method-select"
+                                                                class="col-form-label">Method</label>
+                                                            <select
+                                                                class="form-select form-select-sm http-method-select"
+                                                                required>
+                                                                <option value="GET">GET</option>
+                                                                <option value="POST">POST</option>
+                                                                <option value="PUT">PUT</option>
+                                                                <option value="DELETE">DELETE</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col col-md-2">
+                                                            <label for="auth-type-select" class="col-form-label">Auth
+                                                                Type</label>
+                                                            <select
+                                                                class="form-select form-select-sm auth-type-select mb-3">
+                                                                <option value="none">None</option>
+                                                                <option value="basic">Basic Auth</option>
+                                                                <option value="bearer">Bearer Token</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col col-md-8">
+                                                            <label for="job-endpoint" class="col-form-label">Endpoint /
+                                                                API
+                                                                URL</label>
+                                                            <input type="text"
+                                                                class="form-control form-control-sm job-endpoint"
+                                                                required placeholder="Enter endpoint / API URL">
+                                                        </div>
+                                                    </div>
 
-                                            <div class="row mb-3 basic-auth-fields" style="display: none;">
-                                                <div class="col col-md-6">
-                                                    <input type="text" class="form-control form-control-sm username"
-                                                        placeholder="Enter username">
+                                                    <div class="row mb-3 basic-auth-fields" style="display: none;">
+                                                        <div class="col col-md-6">
+                                                            <input type="text"
+                                                                class="form-control form-control-sm username"
+                                                                placeholder="Enter username">
+                                                        </div>
+                                                        <div class="col col-md-6">
+                                                            <input type="password"
+                                                                class="form-control form-control-sm password"
+                                                                placeholder="Enter password">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group mb-3 bearer-auth-fields"
+                                                        style="display: none;">
+                                                        <input type="text"
+                                                            class="form-control form-control-sm bearer-token"
+                                                            placeholder="Enter bearer token">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="requestHeaders" class="col-form-label">Request
+                                                            Headers
+                                                        </label>
+                                                        <textarea class="form-control request-headers"
+                                                            placeholder="key: value pairs separated by new line"
+                                                            rows="3"></textarea>
+                                                    </div>
+                                                    <div class="form-group request-body-block" style="display: none;">
+                                                        <label for="requestBody" class="col-form-label">Request
+                                                            Body</label>
+                                                        <textarea class="form-control request-body"
+                                                            placeholder="Enter request body"></textarea>
+                                                    </div>
+                                                    <div class="row col-md-12">
+                                                        <div class="col">
+                                                            <button class="btn btn-secondary btn-sm my-3 send-request"
+                                                                type="button">Send
+                                                                Request</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="col col-md-6">
-                                                    <input type="password" class="form-control form-control-sm password"
-                                                        placeholder="Enter password">
-                                                </div>
-                                            </div>
-                                            <div class="form-group mb-3 bearer-auth-fields" style="display: none;">
-                                                <input type="text" class="form-control form-control-sm bearer-token"
-                                                    placeholder="Enter bearer token">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="requestHeaders" class="form-label">Request Headers </label>
-                                                <textarea class="form-control request-headers"
-                                                    placeholder="key: value pairs separated by new line"
-                                                    rows="3"></textarea>
-                                            </div>
-                                            <div class="form-group request-body-block" style="display: none;">
-                                                <label for="requestBody" class="form-label">Request Body</label>
-                                                <textarea class="form-control request-body"
-                                                    placeholder="Enter request body"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="row kafka-fields-block" style="display:none;">
-                                            <div class="col-md-6">
-                                                <label for="kafkaUri" class="form-label">Kafka URI</label>
-                                                <input type="text kafkaUri" class="form-control form-control-sm"
-                                                    placeholder="Enter URI">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="kafkaTopic" class="form-label">Kafka Topic</label>
-                                                <input type="text kafkaTopic" class="form-control form-control-sm"
-                                                    placeholder="Enter topic">
-                                            </div>
-                                        </div>
-                                        <div class="row col-md-12">
-                                            <div class="col">
-                                                <button class="btn btn-primary my-3 send-request">Send Request</button>
-                                            </div>
-                                        </div>
+                                                <div class="row kafka-fields-block" style="display:none;">
+                                                    <div class="col-md-6">
+                                                        <label for="kafkaUri" class="col-form-label">Kafka URI</label>
+                                                        <input type="text" class="form-control form-control-sm kafkaUri"
+                                                            placeholder="Enter URI">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label for="kafkaTopic" class="col-form-label">Kafka
+                                                            Topic</label>
+                                                        <input type="text"
+                                                            class="form-control form-control-sm kafkaTopic"
+                                                            placeholder="Enter topic">
+                                                    </div>
 
-                                        <div class="response-section" style="display: none;">
-                                            <div class="form-group">
-                                                <label for="response-body" class="form-label">Response</label>
-                                                <div class="response-body" style="height:300px;overflow:auto;">
-                                                    <pre><code class="language-json">
-                                                            </code></pre>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="jsontransform" class="form-label">JSON
-                                                    Transformation</label>
-                                                <textarea class="form-control jsontransform code" readonly></textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="javascript" class="form-label">Javascript</label>
-                                                <textarea class="form-control javascript code" readonly></textarea>
+
+
+                                                <div class="response-section" style="display: none;">
+                                                    <div class="form-group">
+                                                        <label for="response-body"
+                                                            class="col-form-label">Response</label>
+                                                        <div class="response-body" style="height:300px;overflow:auto;">
+                                                            <pre><code class="language-json">
+                                                                        </code></pre>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="jsBlock" style="display: none;">
+                                                    <div class="form-group">
+                                                        <label for="jsontransform" class="col-form-label">JSON
+                                                            Transformation</label>
+                                                        <textarea class="form-control jsontransform"></textarea>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="javascript" class="col-form-label">Javascript</label>
+                                                        <textarea class="form-control javascriptcode"></textarea>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
                             <div id="additionalApiBlock">
-
                             </div>
-
                             <div class="row col-md-12 my-3">
-                                <div class="col">
-                                    <a class="btn btn-primary" id="addApi">Add Api request</a>
+                                <div class="col col-md-2">
+                                    <a class="btn btn-secondary btn-sm" id="addApi">Add request</a>
                                 </div>
-                                <div class="col float-right">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button class="btn btn-primary" id="createJob">Create Job</button>
+                                <div class="col col-md-10">
+                                    <button class="btn btn-primary btn-sm float-end" type="button" id="createJob">Add to
+                                        dashboard</button>
                                 </div>
                             </div>
-
-
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="modal fade" id="visualizationModal" tabindex="-1" aria-labelledby="visualizationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="visualizationModalLabel">Add Visualization Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="chartType" class="form-label">Chart Type</label>
+                                <div id="chartTypeSelection">
+                                    <img src="D:\mustard-UI\assets\line.jfif" alt="Line Chart"
+                                        class="chart-type selected" data-type="line" data-chart-type="line.jfif">
+                                    <img src="D:\mustard-UI\assets\bar1.png" alt="Bar Chart" class="chart-type"
+                                        data-type="bar" data-chart-type="bar1.png">
+                                    <img src="D:\mustard-UI\assets\area.jfif" alt="Area Chart" class="chart-type"
+                                        data-type="area" data-chart-type="area.jfif">
+                                </div>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="showLabel">
+                                <label class="form-check-label" for="showLabel">Show Label</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="chartName" class="form-label">Chart Name</label>
+                                <input type="text" class="form-control" id="chartName">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="chartPreview" class="modal-preview">
+                                <img src="D:/mustard-UI/assets/line.jfif" alt="line Chart Preview">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="saveVisualization">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        
 
     <script>
         $(document).ready(function () {
@@ -206,34 +298,42 @@
             var requestBlockClone = $('.request-block').clone();
 
             var existingJobs = JSON.parse(localStorage.getItem('jobs')) || [];
+
+            const $chartTypeSelection = $('#chartTypeSelection');
+
+            const $chartPreview = $('#chartPreview');
+
+            var selectedChartType = 'line';
+
             displayJobsFromLocalStorage();
 
 
+            // Function to update chart preview
+            function updateChartPreview(chartType) {
+                $chartPreview.html(`<img src="D:/mustard-UI/assets/${chartType}" alt="${chartType} Chart Preview">`);
+            }
 
+            //Function to display jobs from local storage
             function displayJobsFromLocalStorage() {
                 if (typeof (Storage) !== "undefined") {
-
-                    Object.keys(existingJobs).forEach(function (jobName) {
-                        var apiData = existingJobs[jobName];
-                        addJobToList(jobName, apiData);
+                    existingJobs.forEach(function (job) {
+                        addJobToList(job);
                     });
                 } else {
                     console.error("Local storage is not supported.");
                 }
             }
 
-
-
+            //to populate values in form for update
             function populateFormWithJobDetails(job) {
-                $('#jobName').val(job[0].name);
-                $('#jobType').val(job[0].type).trigger('change');
-                // $('.http-fields-block').remove(); // Remove existing HTTP blocks
-                job.forEach(function (currentJob, index) {
-                    alert(index)
+                $('#jobName').val(job.name);
+
+                job.requests.forEach(function (currentJob, index) {
                     if (index > 0) {
                         $('#additionalApiBlock').append(httpBlock);
                     }
-                    var httpBlock = $('.http-fields-block').eq(index);
+                    var httpBlock = $('.request-block').eq(index);
+                    httpBlock.find('.jobType').val(currentJob.type).trigger('change');
                     httpBlock.find('.job-endpoint').val(currentJob.endpoint);
                     httpBlock.find('.http-method-select').val(currentJob.method);
                     httpBlock.find('.request-headers').val(currentJob.headers);
@@ -249,7 +349,7 @@
                 });
             }
 
-
+            //for Update job
             function updateJob(updatedJob, index) {
                 if (index >= 0 && index < existingJobs.length) {
                     existingJobs[index] = updatedJob;
@@ -257,105 +357,210 @@
                 }
             }
 
-            $('#addJobButton').click(function () {
-                $('#jobForm')[0].reset();
-            });
-            var jobs = [];
-            $('#createJob').click(function () {
-                var currentJob = [];
+            //to remove job from list and local storage
+            function removeJob(jobName) {
+                var jobs = JSON.parse(localStorage.getItem('jobs')) || [];
 
-                $('.request-block').each(function () {
-                    var reqBlock = $(this);
+                var indexToRemove = -1;
+                for (var i = 0; i < jobs.length; i++) {
+                    if (jobs[i].name === jobName) {
+                        indexToRemove = i;
+                        break;
+                    }
+                }
 
-                    // Construct object with desired data
-                    var serializedData = {
-                        type: reqBlock.find('.jobType').val(),
-                        endpoint: reqBlock.find('.job-endpoint').val(),
-                        method: reqBlock.find('.http-method-select').val(),
-                        headers: reqBlock.find('.request-headers').val(),
-                        body: reqBlock.find('.request-body').val(),
-                        authType: reqBlock.find('.auth-type-select').val(),
-                        username: reqBlock.find('.username').val(),
-                        password: reqBlock.find('.password').val(),
-                        bearerToken: reqBlock.find('.bearer-token').val(),
-                        kafkaUri: reqBlock.find('.kafkaUri').val(),
-                        kafkaTopic: reqBlock.find('kafkaTopic').val(),
-                    };
+                if (indexToRemove !== -1) {
+                    jobs.splice(indexToRemove, 1);
+                    localStorage.setItem('jobs', JSON.stringify(jobs));
 
-                    currentJob.push(serializedData);
+                    $('#jobList').find('.rawJobName:contains("' + jobName + '")').closest('li').remove();
+                } else {
+                    console.error('Job with name ' + jobName + ' not found.');
+                }
+            }
+
+            //for field validation
+            function validateForm() {
+                var isValid = true;
+                $('.form-control[required]').each(function () {
+                    if ($(this).val().trim() === '') {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                        $(this).siblings('.invalid-feedback').remove();
+                        $(this).focus();
+                        return false;
+                    }
                 });
+                return isValid;
+            }
 
-                var jobName = $('#jobName').val();
-                var jobs = JSON.parse(localStorage.getItem('jobs')) || {};
-                jobs[jobName] = currentJob;
-                localStorage.setItem('jobs', JSON.stringify(jobs));
-
-                addJobToList(jobName);
-
-                $('#jobForm')[0].reset();
-            });
-
-            function addJobToList(jobname, apiData) {
+            //to add new job to the UI list
+            function addJobToList(currentJob) {
                 var apiText = '';
-                apiData.forEach(function (api) {
-                    apiText += api.type.toUpperCase() + ', '; // Convert type to uppercase
+                currentJob.requests.forEach(function (api) {
+                    apiText += api.type.toUpperCase() + ', '; 
                 });
-                apiText = apiText.slice(0, -2); // Remove the last comma and space
+                apiText = apiText.slice(0, -2); 
 
-                var jobItem = '<li class="list-group-item">' +
-                    '<span class="job-name"><strong>' + jobname.toUpperCase() + '</strong></span>' + // Bold and uppercase
-                    '<br>' + // Line break to separate job name and API details
-                    '<span class="job-type" style="font-size: smaller;">(' + apiText + ')</span>' + // Smaller text
+                var jobItem = '<li class="list-group-item py-1">' +
+                    '<span style="display:none" class="rawJobName">' + currentJob.name + '</span>' +
+                    '<span class="job-name" style="font-size: smaller;"><strong>' + currentJob.name.toUpperCase() + '</strong></span>' + 
+                    '<br>' + 
+                    '<span class="job-type" style="font-size: smaller;">(' + apiText + ')</span>' + 
                     '<button class="btn btn-sm btn-danger float-end delete-job"><strong>-</strong></button>' +
                     '</li>';
                 $('#jobList').append(jobItem);
             }
 
+            $chartTypeSelection.on('click', '.chart-type', function () {
+                $('.chart-type').removeClass('selected');
+
+                $(this).addClass('selected');
+
+                const ChartType = $(this).data('chart-type');
+                selectedChartType = $(this).data('type');
+                updateChartPreview(ChartType);
+            });
+
+            $('#addJobButton').click(function () {
+                $('#jobForm')[0].reset();
+            });
+
+            $(document).on('input', '#jobName', function () {
+                $('#chartName').val($(this).val());
+            });
+
+            $(document).on('click', '.delete-accordion-item', function (e) {
+                var requestBlockCount = $('.request-block').length;
+                if (requestBlockCount > 1) {
+                    var result = confirm('Are you sure you want to delete this item?');
+                    if (result) {
+                        var accordionItem = $(this).closest('.accordion-item');
+                        accordionItem.remove();
+                    }
+                } else {
+                    alert("There should be atleast one request block.");
+                }
+
+            });
+            $('#createJob').click(function () {
+                if (validateForm()) {
+                    $('#visualizationModal').modal('show');
+                }
+            });
+            $(document).on('input', '.form-control[required]', function (e) {
+                $(this).removeClass('is-invalid');
+                $(this).siblings('.invalid-feedback').remove();
+            });
+
+            $('#saveVisualization').click(function (e) {
+                e.preventDefault();
+                var chartType = selectedChartType;
+                var showLabel = $('#showLabel').prop('checked');
+                var chartName = $('#chartName').val();
+
+
+                var jobs = JSON.parse(localStorage.getItem('jobs')) || [];
+                var currentJob = {
+                    name: $('#jobName').val(),
+                    requests: [],
+                    visualization: {
+                        type: chartType,
+                        showLabel: showLabel,
+                        name: chartName
+                    }
+                };
+                $('.request-block').each(function () {
+                    var reqBlock = $(this);
+
+                    var serializedData = {
+                        type: reqBlock.find('.jobType').val(),
+                        endpoint: reqBlock.find('.job-endpoint').val(),
+                        method: reqBlock.find('.http-method-select').val(),
+                        headers: reqBlock.find('.request-headers').val(),
+                        body: reqBlock.find('.request-body').val() || null,
+                        authType: reqBlock.find('.auth-type-select').val(),
+                        username: reqBlock.find('.username').val() || null,
+                        password: reqBlock.find('.password').val() || null,
+                        bearerToken: reqBlock.find('.bearer-token').val() || null,
+                        kafkaUri: reqBlock.find('.kafkaUri').val(),
+                        kafkaTopic: reqBlock.find('.kafkaTopic').val(),
+                        jsontransform: reqBlock.find('.jsontransform').val(),
+                        jsCode: reqBlock.find('.javascriptcode').val(),
+
+                    };
+                    currentJob.requests.push(serializedData);
+                });
+
+                jobs.push(currentJob);
+
+                localStorage.setItem('jobs', JSON.stringify(jobs));
+
+                addJobToList(currentJob);
+                toastr.success('successfully added the job to Dashboard!', '', {
+                    timeOut: 1000,
+                    onHidden: function() {
+                        location.reload();
+                    }
+                });
+            });
+
+
+
             $(document).on('click', '.send-request', function (e) {
                 e.preventDefault();
                 var httpBlock = $(this).closest('.request-block');
                 var endpoint = httpBlock.find('.job-endpoint').val();
-                var method = httpBlock.find('.http-method-select').val();
-                var headers = httpBlock.find('.request-headers').val();
+                if (endpoint != '') {
 
-                var body = httpBlock.find('.request-body').val();
-                var authType = httpBlock.find('.auth-type-select').val();
-                var username = httpBlock.find('.username').val();
-                var password = httpBlock.find('.password').val();
-                var bearerToken = httpBlock.find('.bearer-token').val();
+                    var method = httpBlock.find('.http-method-select').val();
+                    var headers = httpBlock.find('.request-headers').val();
 
-                var parsedHeaders = {};
-                headers.split('\n').forEach(function (line) {
-                    var parts = line.split(':');
-                    if (parts.length === 2) {
-                        var key = parts[0].trim();
-                        var value = parts[1].trim();
-                        parsedHeaders[key] = value;
+                    var body = httpBlock.find('.request-body').val();
+                    var authType = httpBlock.find('.auth-type-select').val();
+                    var username = httpBlock.find('.username').val();
+                    var password = httpBlock.find('.password').val();
+                    var bearerToken = httpBlock.find('.bearer-token').val();
+
+                    var parsedHeaders = {};
+                    headers.split('\n').forEach(function (line) {
+                        var parts = line.split(':');
+                        if (parts.length === 2) {
+                            var key = parts[0].trim();
+                            var value = parts[1].trim();
+                            parsedHeaders[key] = value;
+                        }
+                    });
+                    if (authType === 'basic') {
+                        var authHeader = 'Basic ' + btoa(username + ':' + password);
+                        parsedHeaders['Authorization'] = authHeader;
+                    } else if (authType === 'bearer') {
+                        parsedHeaders['Authorization'] = 'Bearer ' + bearerToken;
                     }
-                });
-                if (authType === 'basic') {
-                    var authHeader = 'Basic ' + btoa(username + ':' + password);
-                    parsedHeaders['Authorization'] = authHeader;
-                } else if (authType === 'bearer') {
-                    parsedHeaders['Authorization'] = 'Bearer ' + bearerToken;
+                    $.ajax({
+                        url: endpoint,
+                        method: method,
+                        headers: parsedHeaders,
+                        data: body,
+                        success: function (response) {
+                            var responseBody = httpBlock.find('.response-body code');
+                            responseBody.text(JSON.stringify(response, null, 2)); // Set the response body content
+                            hljs.highlightElement(responseBody[0]);
+                            httpBlock.find('.response-section').show();
+                            httpBlock.find('.jsBlock').show();
+                        },
+                        error: function (xhr, status, error) {
+                            httpBlock.find('.response-body').val("Error: Invalid Request");
+                            httpBlock.find('.response-section').show();
+                            httpBlock.find('.jsBlock').show();
+
+                        }
+                    });
+                } else {
+                    httpBlock.find('.job-endpoint').addClass('is-invalid');
+                    httpBlock.find('.job-endpoint').siblings('.invalid-feedback').remove();
+                    httpBlock.find('.job-endpoint').focus();
                 }
-                $.ajax({
-                    url: endpoint,
-                    method: method,
-                    headers: parsedHeaders,
-                    data: body,
-                    success: function (response) {
-                        var responseBody = httpBlock.find('.response-body code');
-                        responseBody.text(JSON.stringify(response, null, 2)); // Set the response body content
-                        hljs.highlightElement(responseBody[0]);
-                        httpBlock.find('.response-section').show();
-
-                    },
-                    error: function (xhr, status, error) {
-                        httpBlock.find('.response-body').val("Error: Invalid Request");
-                        httpBlock.find('.response-section').show();
-                    }
-                });
             });
 
             $(document).on('click', '.list-group-item', function () {
@@ -374,7 +579,7 @@
                     method: $('#httpMethod').val(),
                     headers: $('#requestHeaders').val(),
                     body: $('#requestBody').val(),
-                    transformation: $('#jsonTransformation').val(),
+                    transformation: $('#jsontransform').val(),
                     jsCode: $('#jsCode').val()
                 };
                 updateJob(updatedJob, index);
@@ -385,6 +590,26 @@
                 }
             });
 
+            $('#addApi').click(function (e) {
+                var requestBlockCount = $('.request-block').length + 1;
+                $('#additionalApiBlock').append(
+                    '<div class="accordion" id="requestAccordion' + requestBlockCount + '">' +
+                    '<div class="accordion-item">' +
+                    '<h2 class="accordion-header d-flex justify-content-between" id="headingOne' + requestBlockCount + '" style="background-color: #cfe2ff;" >' +
+                    '<button class="btn btn-primary btn-sm accordion-button" type="button" data-bs-toggle="collapse" style="background-color: #cfe2ff;" data-bs-target="#requestBlock' + requestBlockCount + '" aria-expanded="true" aria-controls="requestBlock' + requestBlockCount + '">Request Block ' +
+                    requestBlockCount + '</button><button class="btn btn-sm delete-accordion-item" type="button" style="background-color: #cfe2ff;">' +
+                    '<i class="bi bi-trash"></i>' +
+                    '</button></h2>' +
+                    '<div id="requestBlock' + requestBlockCount + '" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#requestAccordion' + requestBlockCount + '"><div class="accordion-body"><div class="request-block">' +
+                    requestBlockClone.html() + '</div></div></div></div></div>'
+                );
+            });
+
+            $(document).on('click', '.delete-job', function (e) {
+                e.stopPropagation();
+                var jobName = $(this).closest('.list-group-item').find('.rawJobName').text();
+                removeJob(jobName);
+            });
 
             ///change events
             $(document).on('change', '.jobType', function () {
@@ -395,9 +620,17 @@
                 if (selectedType === 'http') {
                     httpFieldsBlock.show();
                     kafkaFields.hide();
+                    httpFieldsBlock.find('.job-endpoint').prop('required', true);
+                    kafkaFields.find('input').prop('required', false);
                 } else if (selectedType === 'kafka') {
                     httpFieldsBlock.hide();
                     kafkaFields.show();
+                    kafkaFields.find('input').prop('required', true);
+                    httpFieldsBlock.find('.job-endpoint').prop('required', false);
+                    $(this).closest('.request-block').find('.response-section').hide();
+                    $(this).closest('.request-block').find('.jsBlock').show();
+
+
                 }
             });
 
@@ -407,12 +640,22 @@
                 if (selectedAuthType === 'basic') {
                     httpBlock.find('.basic-auth-fields').show();
                     httpBlock.find('.bearer-auth-fields').hide();
+                    httpBlock.find('.basic-auth-fields').find('input').prop('required', true);
+                    httpBlock.find('.bearer-auth-fields').find('input').prop('required', false);
+
                 } else if (selectedAuthType === 'bearer') {
                     httpBlock.find('.basic-auth-fields').hide();
                     httpBlock.find('.bearer-auth-fields').show();
+                    httpBlock.find('.basic-auth-fields').find('input').prop('required', false);
+                    httpBlock.find('.bearer-auth-fields').find('input').prop('required', true);
+
+
                 } else {
                     httpBlock.find('.basic-auth-fields').hide();
                     httpBlock.find('.bearer-auth-fields').hide();
+                    httpBlock.find('.basic-auth-fields').find('input').prop('required', false);
+                    httpBlock.find('.bearer-auth-fields').find('input').prop('required', false);
+
                 }
             });
             $(document).on('change', '.http-method-select', function () {
@@ -425,16 +668,7 @@
                 }
             });
 
-            $('#addApi').click(function (e) {
-                var requestBlockCount = $('.request-block').length + 1;
-                $('#additionalApiBlock').append(
-                    '<div class="accordion" id="requestAccordion' + requestBlockCount + '">' +
-                    '<button class="btn btn-primary btn-sm accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#requestBlock' + requestBlockCount + '" aria-expanded="true" aria-controls="requestBlock' + requestBlockCount + '">Request Block ' +
-                    requestBlockCount + '</button>' +
-                    '<div id="requestBlock' + requestBlockCount + '" class="collapse show" aria-labelledby="headingOne" data-bs-parent="#requestAccordion' + requestBlockCount + '"><div class="request-block">' +
-                    requestBlockClone.html() + '</div></div></div>'
-                );
-            });
+
         });
     </script>
 </body>
