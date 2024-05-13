@@ -11,6 +11,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    
     <style>
         .accordion-body {
             padding: 10px;
@@ -40,7 +42,7 @@
             <div class="col-lg-3 col-md-3 col-sm-12 bottom-0">
                 <div class="card mt-5">
                     <div class="card-header">
-                        <h5 class="card-title">Job List</h5>
+                        <h5 class="card-title mb-0">Job List</h5>
                     </div>
                     <div class="card-body">
                         <ul id="jobList" class="list-group">
@@ -202,13 +204,12 @@
                                                 </div>
                                                 <div class="jsBlock" style="display: none;">
                                                     <div class="form-group">
-                                                        <label for="jsontransform" class="col-form-label">H JSON
+                                                        <label for="jsontransform" class="col-form-label">JSON
                                                             Transformation</label>
                                                         <textarea class="form-control jsontransform"></textarea>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="javascript" class="col-form-label">H
-                                                            Javascript</label>
+                                                        <label for="javascript" class="col-form-label">Javascript</label>
                                                         <textarea class="form-control javascriptcode"></textarea>
                                                     </div>
                                                 </div>
@@ -220,11 +221,11 @@
                             <div id="additionalApiBlock">
                             </div>
                             <div class="row col-md-12 my-3">
-                                <div class="col">
-                                    <a class="btn btn-secondary" id="addApi">Add request</a>
+                                <div class="col col-md-2">
+                                    <a class="btn btn-secondary btn-sm" id="addApi">Add request</a>
                                 </div>
-                                <div class="col float-right">
-                                    <button class="btn btn-primary" type="button" id="createJob">Add to
+                                <div class="col col-md-10">
+                                    <button class="btn btn-primary btn-sm float-end" type="button" id="createJob">Add to
                                         dashboard</button>
                                 </div>
                             </div>
@@ -234,7 +235,6 @@
             </div>
         </div>
     </div>
-    <!-- Add to dashboard modal -->
     <div class="modal fade" id="visualizationModal" tabindex="-1" aria-labelledby="visualizationModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -274,8 +274,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="saveVisualization">Save</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="saveVisualization">Save</button>
                 </div>
             </div>
         </div>
@@ -287,6 +287,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        
 
     <script>
         $(document).ready(function () {
@@ -396,15 +398,15 @@
             function addJobToList(currentJob) {
                 var apiText = '';
                 currentJob.requests.forEach(function (api) {
-                    apiText += api.type.toUpperCase() + ', '; // Convert type to uppercase
+                    apiText += api.type.toUpperCase() + ', '; 
                 });
-                apiText = apiText.slice(0, -2); // Remove the last comma and space
+                apiText = apiText.slice(0, -2); 
 
                 var jobItem = '<li class="list-group-item py-1">' +
                     '<span style="display:none" class="rawJobName">' + currentJob.name + '</span>' +
-                    '<span class="job-name" style="font-size: smaller;"><strong>' + currentJob.name.toUpperCase() + '</strong></span>' + // Bold and uppercase
-                    '<br>' + // Line break to separate job name and API details
-                    '<span class="job-type" style="font-size: smaller;">(' + apiText + ')</span>' + // Smaller text
+                    '<span class="job-name" style="font-size: smaller;"><strong>' + currentJob.name.toUpperCase() + '</strong></span>' + 
+                    '<br>' + 
+                    '<span class="job-type" style="font-size: smaller;">(' + apiText + ')</span>' + 
                     '<button class="btn btn-sm btn-danger float-end delete-job"><strong>-</strong></button>' +
                     '</li>';
                 $('#jobList').append(jobItem);
@@ -495,8 +497,12 @@
                 localStorage.setItem('jobs', JSON.stringify(jobs));
 
                 addJobToList(currentJob);
-
-                location.reload();
+                toastr.success('successfully added the job to Dashboard!', '', {
+                    timeOut: 1000,
+                    onHidden: function() {
+                        location.reload();
+                    }
+                });
             });
 
 
